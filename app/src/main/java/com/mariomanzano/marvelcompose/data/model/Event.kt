@@ -1,6 +1,6 @@
 package com.mariomanzano.marvelcompose.data.model
 
-data class Character(
+data class Event(
     override val id: Int,
     override val title: String,
     override val description: String,

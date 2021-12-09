@@ -10,15 +10,30 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import com.mariomanzano.marvelcompose.MarvelApp
 import com.mariomanzano.marvelcompose.data.model.Character
+import com.mariomanzano.marvelcompose.data.repositories.CharactersRepository
+
+@ExperimentalCoilApi
+@ExperimentalFoundationApi
+@Composable
+fun CharactersScreen(){
+    var characterState by remember { mutableStateOf(emptyList<Character>())}
+
+    LaunchedEffect(Unit) {
+        characterState = CharactersRepository.get()
+    }
+
+    CharactersScreen(characterState)
+}
 
 @ExperimentalCoilApi
 @ExperimentalFoundationApi
@@ -43,36 +58,19 @@ fun CharacterItem(character: Character) {
         Card {
             Image(
                 painter = rememberImagePainter(character.thumbnail),
-                contentDescription = character.name,
+                contentDescription = character.description,
                 modifier = Modifier
                     .background(Color.LightGray)
                     .fillMaxWidth()
-                    .aspectRatio(1f)
+                    .aspectRatio(1f),
+                contentScale = ContentScale.Crop
             )
         }
         Text(
-            text = character.name,
+            text = character.title,
             style = MaterialTheme.typography.subtitle1,
             maxLines = 2,
             modifier = Modifier.padding(8.dp, 16.dp)
         )
-    }
-}
-
-@ExperimentalCoilApi
-@ExperimentalFoundationApi
-@Preview
-@Composable
-fun CharacterScreenPrev() {
-    val characters = (1..10).map {
-        Character(
-            it,
-            "Name $it",
-            "Description",
-            "https://via.placeholder.com/150x225/FFFF00/000000?text=name$it"
-        )
-    }
-    MarvelApp {
-        CharactersScreen(characters = characters)
     }
 }
