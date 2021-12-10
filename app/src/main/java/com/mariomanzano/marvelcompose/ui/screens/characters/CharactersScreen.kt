@@ -3,6 +3,7 @@ package com.mariomanzano.marvelcompose.ui.screens.characters
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
@@ -24,35 +25,41 @@ import com.mariomanzano.marvelcompose.data.repositories.CharactersRepository
 @ExperimentalCoilApi
 @ExperimentalFoundationApi
 @Composable
-fun CharactersScreen(){
+fun CharactersScreen(onClick: (Character) -> Unit){
     var characterState by rememberSaveable { mutableStateOf(emptyList<Character>())}
 
     LaunchedEffect(Unit) {
         characterState = CharactersRepository.get()
     }
 
-    CharactersScreen(characterState)
+    CharactersScreen(
+        characters = characterState,
+        onClick = onClick
+    )
 }
 
 @ExperimentalCoilApi
 @ExperimentalFoundationApi
 @Composable
-fun CharactersScreen(characters: List<Character>) {
+fun CharactersScreen(characters: List<Character>, onClick: (Character) -> Unit) {
     LazyVerticalGrid(
         cells = GridCells.Adaptive(180.dp),
         contentPadding = PaddingValues(4.dp)
     ){
         items(characters){
-            CharacterItem(it)
+            CharacterItem(
+                character = it,
+                modifier = Modifier.clickable { onClick(it) }
+            )
         }
     }
 }
 
 @ExperimentalCoilApi
 @Composable
-fun CharacterItem(character: Character) {
+fun CharacterItem(character: Character, modifier : Modifier) {
     Column(
-        modifier = Modifier.padding(8.dp)
+        modifier = modifier.padding(8.dp)
     ) {
         Card {
             Image(

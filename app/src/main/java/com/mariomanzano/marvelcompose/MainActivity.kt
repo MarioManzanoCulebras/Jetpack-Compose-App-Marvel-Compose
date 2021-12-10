@@ -6,11 +6,8 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
 import coil.annotation.ExperimentalCoilApi
-import com.mariomanzano.marvelcompose.data.model.Character
 import com.mariomanzano.marvelcompose.ui.screens.characters.CharactersScreen
 import com.mariomanzano.marvelcompose.ui.theme.MarvelComposeTheme
 
@@ -22,7 +19,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MarvelApp {
-                CharactersScreen()
+                CharactersScreen(onClick = {})
             }
         }
     }
@@ -36,9 +33,4 @@ fun MarvelApp(content: @Composable ()-> Unit) {
             content()
         }
     }
-}
-
-@Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
 }
