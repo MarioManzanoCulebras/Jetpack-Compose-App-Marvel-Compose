@@ -57,6 +57,7 @@ fun CharacterDetailScreen(character: Character) {
 
 @ExperimentalMaterialApi
 fun LazyListScope.section(icon: ImageVector, name: String, items : List<Reference>){
+    if (items.isEmpty()) return
     item {
         Text(
             text = name,
