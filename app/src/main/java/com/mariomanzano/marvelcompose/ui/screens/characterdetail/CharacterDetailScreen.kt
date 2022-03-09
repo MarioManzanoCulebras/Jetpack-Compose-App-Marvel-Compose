@@ -8,50 +8,65 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Book
-import androidx.compose.material.icons.filled.Bookmark
-import androidx.compose.material.icons.filled.Collections
-import androidx.compose.material.icons.filled.Event
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
-import com.mariomanzano.marvelcompose.MarvelApp
 import com.mariomanzano.marvelcompose.data.model.Character
 import com.mariomanzano.marvelcompose.data.model.Reference
 import com.mariomanzano.marvelcompose.data.repositories.CharactersRepository
+import com.mariomanzano.marvelcompose.ui.navigation.AppBarIcon
 
 @ExperimentalMaterialApi
 @ExperimentalCoilApi
 @Composable
-fun CharacterDetailScreen(id: Int) {
+fun CharacterDetailScreen(id: Int, navController: NavController) {
     var characterState by remember { mutableStateOf<Character?>(null) }
     
     LaunchedEffect(Unit) {
         characterState = CharactersRepository.find(id)
     }
 
-    characterState?.let { CharacterDetailScreen(it) }
+    characterState?.let { CharacterDetailScreen(it) { navController.popBackStack() } }
 
 }
 @ExperimentalMaterialApi
 @ExperimentalCoilApi
 @Composable
-fun CharacterDetailScreen(character: Character) {
-    LazyColumn(modifier = Modifier.fillMaxWidth()){
-        item{
-            Header(character)
+fun CharacterDetailScreen(character: Character, onUpClick: () -> Unit) {
+    Scaffold(
+        topBar = {
+            TopAppBar (
+                title = { Text (character.title)},
+                navigationIcon = { AppBarIcon(
+                    imageVector = Icons.Default.ArrowBack,
+                    onClick = onUpClick) },
+                actions = {
+                    AppBarOverflowMenu(urls = character.urls)
+                }
+            )
         }
-        section(Icons.Default.Collections, "Series", character.references[2].references)
-        section(Icons.Default.Event, "Events", character.references[1].references)
-        section(Icons.Default.Book, "Comics", character.references[0].references)
-        section(Icons.Default.Bookmark, "Stories", character.references[3].references)
+    ) { padding ->
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(padding)
+        ) {
+            item {
+                Header(character)
+            }
+            section(Icons.Default.Collections, "Series", character.references[2].references)
+            section(Icons.Default.Event, "Events", character.references[1].references)
+            section(Icons.Default.Book, "Comics", character.references[0].references)
+            section(Icons.Default.Bookmark, "Stories", character.references[3].references)
+        }
     }
 }
 
@@ -107,22 +122,5 @@ fun Header(character: Character) {
             modifier = Modifier.padding(16.dp, 0.dp)
         )
         Spacer(modifier = Modifier.height(16.dp))
-    }
-}
-
-@ExperimentalMaterialApi
-@Preview (widthDp = 400, heightDp = 700)
-@Composable
-fun CharacterDetailScreenPreview() {
-    val character = Character(
-        1,
-        "Iron Man",
-        "Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, cuando un impresor (N. del T. persona que se dedica a la imprenta) desconocido usó una galería de textos y los mezcló de tal manera que logró hacer un libro de textos especimen. No sólo sobrevivió 500 años, sino que tambien ingresó como texto de relleno en documentos electrónicos, quedando esencialmente igual al original. Fue popularizado en los 60s con la creación de las hojas \"Letraset\", las cuales contenian pasajes de Lorem Ipsum, y más recientemente con software de autoedición, como por ejemplo Aldus PageMaker, el cual incluye versiones de Lorem Ipsum.",
-        "",
-        emptyList(),
-        emptyList()
-    )
-    MarvelApp {
-        CharacterDetailScreen(character)
     }
 }

@@ -45,7 +45,7 @@ private fun NavGraphBuilder.charactersNav(navController: NavController) {
         }
 
         composable(NavCommand.ContentTypeDetail(Feature.CHARACTERS)) {
-            it.arguments?.let { it1 -> CharacterDetailScreen(it1.get(NavArg.ItemId.key) as Int) }
+            it.arguments?.let { it1 -> CharacterDetailScreen(it1.get(NavArg.ItemId.key) as Int, navController) }
         }
     }
 }
